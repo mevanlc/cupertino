@@ -1,3 +1,4 @@
+import ArgumentParser
 @testable import CLI
 import Foundation
 import Testing
@@ -54,6 +55,39 @@ struct CommandRegistrationTests {
         let config = Cupertino.configuration
         #expect(!config.abstract.isEmpty)
         #expect(config.abstract.contains("MCP"))
+    }
+
+    @Test("Index command parses include-docs flag")
+    func indexCommandParsesIncludeDocsFlag() throws {
+        let parsedCommand = try IndexCommand.parseAsRoot(["--include-docs"])
+        let command = try #require(parsedCommand as? IndexCommand)
+        #expect(command.includeDocs)
+    }
+
+    @Test("Index command discussion documents include-docs hardening")
+    func indexCommandDiscussionMentionsIncludeDocs() {
+        let discussion = IndexCommand.configuration.discussion
+        #expect(discussion.contains("--include-docs"))
+        #expect(discussion.contains("prompt-injection risk"))
+    }
+
+    @Test("Install script verifies checksum before extraction")
+    func installScriptVerifiesChecksumBeforeExtraction() throws {
+        let repoRoot = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let installScriptURL = repoRoot.appendingPathComponent("install.sh")
+        let script = try String(contentsOf: installScriptURL, encoding: .utf8)
+
+        let checksumRange = try #require(script.range(of: "shasum -a 256 -c"))
+        let extractRange = try #require(script.range(of: "tar -xzf"))
+
+        #expect(script.contains("CHECKSUM_URL"))
+        #expect(script.contains("curl -fsSLO"))
+        #expect(script.contains("less install.sh"))
+        #expect(checksumRange.lowerBound < extractRange.lowerBound)
     }
 }
 

@@ -5,12 +5,14 @@ Index sample code for search
 ## Synopsis
 
 ```bash
-cupertino index [--sample-code-dir <dir>] [--database <path>] [--force] [--clear]
+cupertino index [--sample-code-dir <dir>] [--database <path>] [--force] [--clear] [--include-docs]
 ```
 
 ## Description
 
 Indexes Apple sample code projects for full-text search. Creates a separate database (`~/.cupertino/samples.db`) optimized for code-level search, distinct from the documentation search database.
+
+By default, Cupertino indexes code and project metadata only. README and markdown/text files are excluded unless you pass `--include-docs`, which reduces prompt-injection exposure when this data is later shown to an AI assistant.
 
 **Important:** Run `cupertino cleanup` before indexing to remove unnecessary files from sample code archives. This reduces index size and improves search quality.
 
@@ -35,6 +37,7 @@ cupertino index
 | `--database` | Database path (default: `~/.cupertino/samples.db`) |
 | `--force` | Force reindex all projects (even if already indexed) |
 | `--clear` | Clear existing index before indexing |
+| `--include-docs` | Also index README and markdown/text files |
 
 ## Examples
 
@@ -48,6 +51,12 @@ cupertino index
 
 ```bash
 cupertino index --force
+```
+
+### Include README and Markdown/Text Files
+
+```bash
+cupertino index --include-docs
 ```
 
 ### Clear and Rebuild
@@ -67,8 +76,9 @@ cupertino index --sample-code-dir ~/my-samples --database ~/my-db.sqlite
 ### Project Metadata
 - Title and description
 - Frameworks used
-- README content
 - Web URL on Apple Developer
+
+README content is only indexed when `--include-docs` is enabled.
 
 ### Source Files
 
@@ -80,14 +90,15 @@ cupertino index --sample-code-dir ~/my-samples --database ~/my-db.sqlite
 | `.metal` | Metal shaders |
 | `.plist`, `.json`, `.strings` | Config/Data |
 | `.entitlements`, `.xcconfig` | Xcode config |
-| `.md`, `.txt` | Documentation |
 | `.storyboard`, `.xib` | Interface Builder |
+
+When `--include-docs` is enabled, `.md`, `.txt`, and `.rtf` files are indexed too.
 
 ## Database Schema
 
 Two FTS5-enabled tables:
 
-- **projects** - Project metadata and README (full-text searchable)
+- **projects** - Project metadata and optional README (full-text searchable when `--include-docs` is used)
 - **files** - Individual source files with folder paths
 
 ## Output
@@ -106,7 +117,7 @@ After indexing, sample code is searchable via MCP tools:
 |------|-------------|
 | `search_samples` | Search projects and code |
 | `list_samples` | List all indexed projects |
-| `read_sample` | Read project README |
+| `read_sample` | Read project metadata and optional README |
 | `read_sample_file` | Read specific source file |
 
 ## Notes
@@ -115,3 +126,4 @@ After indexing, sample code is searchable via MCP tools:
 - Incremental indexing: only new projects are indexed by default
 - Use `--force` to update metadata from catalog changes
 - Database uses FTS5 with BM25 ranking for relevance scoring
+- Returned sample content should be treated as untrusted external data by AI clients

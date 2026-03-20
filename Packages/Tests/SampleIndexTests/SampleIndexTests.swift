@@ -25,6 +25,8 @@ struct SampleIndexTests {
         #expect(SampleIndex.shouldIndex(path: "main.swift"))
         #expect(SampleIndex.shouldIndex(path: "ViewController.m"))
         #expect(SampleIndex.shouldIndex(path: "Header.h"))
+        #expect(!SampleIndex.shouldIndex(path: "README.md"))
+        #expect(SampleIndex.shouldIndex(path: "README.md", includeDocumentation: true))
 
         // Binary files should not be indexed
         #expect(!SampleIndex.shouldIndex(path: "image.png"))

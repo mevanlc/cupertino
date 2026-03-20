@@ -293,7 +293,10 @@ let targets: [Target] = {
     )
     let cliTestsTarget = Target.testTarget(
         name: "CLITests",
-        dependencies: ["CLI"]
+        dependencies: [
+            "CLI",
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        ]
     )
     let mockAIAgentTestsTarget = Target.testTarget(
         name: "MockAIAgentTests",

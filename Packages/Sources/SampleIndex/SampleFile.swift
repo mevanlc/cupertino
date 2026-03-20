@@ -51,7 +51,7 @@ extension SampleIndex {
         }
     }
 
-    /// File types to index (text-based files only)
+    /// File types to index by default (code and structured project files)
     public static let indexableExtensions: Set<String> = [
         // Swift
         "swift",
@@ -63,15 +63,18 @@ extension SampleIndex {
         "metal",
         // Config/Data
         "plist", "json", "strings", "entitlements", "xcconfig",
-        // Documentation
-        "md", "txt", "rtf",
         // Other
         "mlmodel", "storyboard", "xib",
     ]
 
+    /// Optional prose/documentation extensions that are excluded by default
+    public static let documentationExtensions: Set<String> = [
+        "md", "txt", "rtf",
+    ]
+
     /// Check if a file should be indexed based on extension
-    public static func shouldIndex(path: String) -> Bool {
+    public static func shouldIndex(path: String, includeDocumentation: Bool = false) -> Bool {
         let ext = URL(fileURLWithPath: path).pathExtension.lowercased()
-        return indexableExtensions.contains(ext)
+        return indexableExtensions.contains(ext) || (includeDocumentation && documentationExtensions.contains(ext))
     }
 }

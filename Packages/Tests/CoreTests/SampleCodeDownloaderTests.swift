@@ -256,6 +256,37 @@ struct SampleCodeDownloaderTests {
         try? FileManager.default.removeItem(at: tempDir)
     }
 
+    @Test("Persisted cookies are written with owner-only permissions")
+    func persistedCookiesUseSecurePermissions() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: tempDir) }
+
+        let cookiesURL = tempDir.appendingPathComponent(Shared.Constants.FileName.authCookies)
+        let cookieData = [
+            CookieData(
+                name: "myacinfo",
+                value: "secret",
+                domain: ".apple.com",
+                path: "/",
+                expiresDate: nil,
+                isSecure: true
+            ),
+        ]
+
+        try SampleCodeDownloader.persistCookies(cookieData, to: cookiesURL)
+
+        let persistedData = try Data(contentsOf: cookiesURL)
+        let persistedCookies = try JSONDecoder().decode([CookieData].self, from: persistedData)
+        let attributes = try FileManager.default.attributesOfItem(atPath: cookiesURL.path)
+        let permissions = attributes[.posixPermissions] as? NSNumber
+
+        #expect(persistedCookies.count == 1)
+        #expect(persistedCookies.first?.name == "myacinfo")
+        #expect(permissions?.intValue == 0o600)
+    }
+
     // MARK: - URL Validation Tests
 
     @Test("Sample code list URL is valid")

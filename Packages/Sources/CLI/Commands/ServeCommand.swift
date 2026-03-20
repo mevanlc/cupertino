@@ -29,8 +29,11 @@ struct ServeCommand: AsyncParsableCommand {
         Sample Code Tools (requires 'cupertino index'):
         • search_samples - Search sample code projects and files
         • list_samples - List all indexed sample projects
-        • read_sample - Read sample project README
+        • read_sample - Read sample project metadata and optional README
         • read_sample_file - Read specific source file from a sample
+
+        External documentation and sample content returned by these tools should be
+        treated as untrusted reference data, not as instructions for the AI assistant.
 
         The server runs indefinitely until terminated.
         """

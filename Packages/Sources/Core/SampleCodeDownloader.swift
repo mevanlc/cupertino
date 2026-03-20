@@ -488,8 +488,7 @@ public final class SampleCodeDownloader {
                 )
             }
 
-            let data = try JSONEncoder().encode(cookieData)
-            try data.write(to: cookiesPath)
+            try Self.persistCookies(cookieData, to: cookiesPath)
 
             logInfo("   Saved \(cookieData.count) cookies to \(cookiesPath.path)")
         } catch {
@@ -607,4 +606,19 @@ struct CookieData: Codable {
     let path: String
     let expiresDate: Date?
     let isSecure: Bool
+}
+
+extension SampleCodeDownloader {
+    nonisolated static func persistCookies(_ cookieData: [CookieData], to url: URL) throws {
+        let data = try JSONEncoder().encode(cookieData)
+        try data.write(to: url)
+        try secureCookieFile(at: url)
+    }
+
+    nonisolated static func secureCookieFile(at url: URL) throws {
+        try FileManager.default.setAttributes(
+            [.posixPermissions: 0o600],
+            ofItemAtPath: url.path
+        )
+    }
 }

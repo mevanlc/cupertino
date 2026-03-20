@@ -230,10 +230,20 @@ cupertino doctor       # Health check
 
 ## Installation Methods
 
-### 1. One-Command Install (Recommended)
+### 1. Safer Install (Download, Inspect, Run)
 
 ```bash
-bash <(curl -sSL https://raw.githubusercontent.com/mihaelamj/cupertino/main/install.sh)
+curl -fsSLO https://raw.githubusercontent.com/mihaelamj/cupertino/main/install.sh
+less install.sh
+bash install.sh
+```
+
+The installer verifies the published release checksum before extraction.
+
+### 1b. Convenience Alternative
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/mihaelamj/cupertino/main/install.sh)
 ```
 
 ### 2. Homebrew

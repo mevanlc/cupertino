@@ -16,7 +16,7 @@ CLI commands for the Cupertino documentation server.
 | [list-frameworks](list-frameworks/) | List available frameworks with document counts |
 | [list-samples](list-samples/) | List indexed Apple sample code projects |
 | [search-samples](search-samples/) | Search Apple sample code projects and files |
-| [read-sample](read-sample/) | Read a sample project's README and metadata |
+| [read-sample](read-sample/) | Read a sample project's metadata and optional README |
 | [read-sample-file](read-sample-file/) | Read a source file from a sample project |
 | [doctor](doctor/) | Check server health and configuration |
 | [cleanup](cleanup/) | Clean up downloaded sample code archives |

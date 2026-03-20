@@ -54,7 +54,8 @@ cupertino fetch --type code --authenticate --output-dir ./samples
 - Uses Safari's standard authentication
 - Credentials are handled by Safari, not Cupertino
 - Session is temporary and browser-based
-- No credentials are stored by Cupertino
+- Cupertino stores Apple session cookies locally at `~/.cupertino/sample-code/.auth-cookies.json`
+- The cookies file is reused for later downloads and is written with owner-only permissions
 
 ## Notes
 

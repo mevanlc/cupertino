@@ -7,12 +7,12 @@ import Shared
 
 // MARK: - Read Sample Command
 
-/// CLI command for reading a sample project's README - mirrors MCP tool functionality.
+/// CLI command for reading a sample project's metadata and optional README.
 @available(macOS 10.15, macCatalyst 13, iOS 13, tvOS 13, watchOS 6, *)
 struct ReadSampleCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "read-sample",
-        abstract: "Read a sample project's README and metadata"
+        abstract: "Read a sample project's metadata and optional README"
     )
 
     @Argument(help: "Project ID (e.g., building-a-document-based-app-with-swiftui)")

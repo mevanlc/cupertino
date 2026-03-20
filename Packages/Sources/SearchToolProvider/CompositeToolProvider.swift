@@ -323,7 +323,10 @@ public actor CompositeToolProvider: ToolProvider {
         )
         let markdown = formatter.format(results)
 
-        return CallToolResult(content: [.text(TextContent(text: markdown))])
+        return CallToolResult(content: untrustedContentBlocks(
+            notice: Shared.ContentSafety.toolNotice(for: "sample source code and text files"),
+            body: markdown
+        ))
     }
 
     // MARK: - Teaser Results
@@ -377,7 +380,10 @@ public actor CompositeToolProvider: ToolProvider {
         let formatter = SampleSearchMarkdownFormatter(query: query, framework: framework, teasers: teasers)
         let markdown = formatter.format(result)
 
-        return CallToolResult(content: [.text(TextContent(text: markdown))])
+        return CallToolResult(content: untrustedContentBlocks(
+            notice: Shared.ContentSafety.toolNotice(for: "sample source code and text files"),
+            body: markdown
+        ))
     }
 
     // MARK: - HIG Search
@@ -478,7 +484,10 @@ public actor CompositeToolProvider: ToolProvider {
             )
         }
 
-        return CallToolResult(content: [.text(TextContent(text: documentContent))])
+        return CallToolResult(content: untrustedContentBlocks(
+            notice: Shared.ContentSafety.toolNotice(for: "documentation content from \(uri)"),
+            body: documentContent
+        ))
     }
 
     // MARK: - Sample Code Tools
@@ -519,7 +528,10 @@ public actor CompositeToolProvider: ToolProvider {
             markdown += "\n"
         }
 
-        return CallToolResult(content: [.text(TextContent(text: markdown))])
+        return CallToolResult(content: untrustedContentBlocks(
+            notice: Shared.ContentSafety.toolNotice(for: "sample project metadata and README content"),
+            body: markdown
+        ))
     }
 
     private func handleReadSample(args: ArgumentExtractor) async throws -> CallToolResult {
@@ -573,7 +585,10 @@ public actor CompositeToolProvider: ToolProvider {
             markdown += "💡 Use `read_sample_file` with project_id and file_path to view source code.\n"
         }
 
-        return CallToolResult(content: [.text(TextContent(text: markdown))])
+        return CallToolResult(content: untrustedContentBlocks(
+            notice: Shared.ContentSafety.toolNotice(for: "sample source code and text files"),
+            body: markdown
+        ))
     }
 
     private func handleReadSampleFile(args: ArgumentExtractor) async throws -> CallToolResult {
@@ -605,7 +620,10 @@ public actor CompositeToolProvider: ToolProvider {
         }
         markdown += "```\n"
 
-        return CallToolResult(content: [.text(TextContent(text: markdown))])
+        return CallToolResult(content: untrustedContentBlocks(
+            notice: Shared.ContentSafety.toolNotice(for: "sample source code and text files"),
+            body: markdown
+        ))
     }
 
     // MARK: - Semantic Search Handlers (#81)
@@ -713,6 +731,13 @@ public actor CompositeToolProvider: ToolProvider {
         )
 
         return CallToolResult(content: [.text(TextContent(text: markdown))])
+    }
+
+    private func untrustedContentBlocks(notice: String, body: String) -> [ContentBlock] {
+        [
+            .text(TextContent(text: notice)),
+            .text(TextContent(text: body)),
+        ]
     }
 
     /// Format symbol search results as markdown

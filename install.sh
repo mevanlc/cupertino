@@ -4,7 +4,12 @@
 # One-command install for macOS
 #
 # Usage:
-#   curl -sSL https://raw.githubusercontent.com/mihaelamj/cupertino/main/install.sh | bash
+#   curl -fsSLO https://raw.githubusercontent.com/mihaelamj/cupertino/main/install.sh
+#   less install.sh
+#   bash install.sh
+#
+# Convenience alternative (skip local inspection):
+#   bash <(curl -fsSL https://raw.githubusercontent.com/mihaelamj/cupertino/main/install.sh)
 #
 # Options:
 #   --build    Force build from source instead of downloading binary
@@ -17,7 +22,7 @@
 #   4. Downloads documentation databases
 #
 
-set -e
+set -euo pipefail
 
 # Configuration
 REPO="mihaelamj/cupertino"
@@ -91,7 +96,7 @@ fi
 
 # Create temp directory
 TEMP_DIR=$(mktemp -d)
-trap "rm -rf $TEMP_DIR" EXIT
+trap 'rm -rf "$TEMP_DIR"' EXIT
 
 # Get latest release version
 info "Checking latest release..."
@@ -106,12 +111,25 @@ fi
 
 # Try to download pre-built binary
 download_binary() {
-    local BINARY_URL="https://github.com/${REPO}/releases/download/${LATEST_VERSION}/cupertino-${LATEST_VERSION}-macos-universal.tar.gz"
+    local ARCHIVE_NAME="cupertino-${LATEST_VERSION}-macos-universal.tar.gz"
+    local BINARY_URL="https://github.com/${REPO}/releases/download/${LATEST_VERSION}/${ARCHIVE_NAME}"
+    local CHECKSUM_URL="${BINARY_URL}.sha256"
+    local ARCHIVE_PATH="$TEMP_DIR/${ARCHIVE_NAME}"
+    local CHECKSUM_PATH="$TEMP_DIR/${ARCHIVE_NAME}.sha256"
 
     info "Downloading pre-built binary..."
-    if curl -sL --fail -o "$TEMP_DIR/cupertino.tar.gz" "$BINARY_URL" 2>/dev/null; then
+    if curl -fsSL --fail -o "$ARCHIVE_PATH" "$BINARY_URL" 2>/dev/null; then
+        info "Downloading checksum..."
+        curl -fsSL --fail -o "$CHECKSUM_PATH" "$CHECKSUM_URL" 2>/dev/null || return 1
+
+        info "Verifying checksum..."
+        (
+            cd "$TEMP_DIR"
+            shasum -a 256 -c "$(basename "$CHECKSUM_PATH")"
+        ) >/dev/null || return 1
+
         info "Extracting..."
-        tar -xzf "$TEMP_DIR/cupertino.tar.gz" -C "$TEMP_DIR"
+        tar -xzf "$ARCHIVE_PATH" -C "$TEMP_DIR"
         if [[ -f "$TEMP_DIR/cupertino" ]]; then
             return 0
         fi

@@ -191,7 +191,7 @@ List all indexed sample code projects.
 
 ### read_sample
 
-Read a sample project's README and metadata.
+Read a sample project's metadata and optional README.
 
 **Parameters:**
 - `project_id` (required): Sample project ID from search results

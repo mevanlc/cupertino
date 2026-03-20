@@ -14,6 +14,7 @@ extension SampleIndex {
     public actor Builder {
         private let database: Database
         private let sampleCodeDirectory: URL
+        private let includeDocumentationContent: Bool
         private let logger = os.Logger(subsystem: "com.cupertino", category: "SampleIndex")
 
         /// Progress callback for indexing operations
@@ -21,10 +22,12 @@ extension SampleIndex {
 
         public init(
             database: Database,
-            sampleCodeDirectory: URL = SampleIndex.defaultSampleCodeDirectory
+            sampleCodeDirectory: URL = SampleIndex.defaultSampleCodeDirectory,
+            includeDocumentationContent: Bool = false
         ) {
             self.database = database
             self.sampleCodeDirectory = sampleCodeDirectory
+            self.includeDocumentationContent = includeDocumentationContent
         }
 
         // MARK: - Index Progress
@@ -236,7 +239,7 @@ extension SampleIndex {
             let projectRoot = try findProjectRoot(in: tempDir)
 
             // Read README if exists
-            let readme = readReadme(in: projectRoot)
+            let readme = includeDocumentationContent ? readReadme(in: projectRoot) : nil
 
             // Find all indexable files
             let files = try findIndexableFiles(in: projectRoot, projectId: projectId)
@@ -403,7 +406,7 @@ extension SampleIndex {
             let projectRoot = directoryURL
 
             // Read README if exists
-            let readme = readReadme(in: projectRoot)
+            let readme = includeDocumentationContent ? readReadme(in: projectRoot) : nil
 
             // Find all indexable files
             let files = try findIndexableFiles(in: projectRoot, projectId: projectId)
@@ -553,7 +556,10 @@ extension SampleIndex {
                 )
 
                 // Skip non-indexable files
-                guard SampleIndex.shouldIndex(path: relativePath) else {
+                guard SampleIndex.shouldIndex(
+                    path: relativePath,
+                    includeDocumentation: includeDocumentationContent
+                ) else {
                     continue
                 }
 

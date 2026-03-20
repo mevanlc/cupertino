@@ -10,7 +10,7 @@ cupertino search-samples <query> [--framework <name>] [--search-files] [--limit 
 
 ## Description
 
-Searches sample code projects by keyword. Can search project metadata (title, description, README) and optionally file contents.
+Searches sample code projects by keyword. It always searches project metadata (title, description) and optionally source file contents. README content is searched only when the index was built with `cupertino index --include-docs`.
 
 ## Arguments
 
@@ -78,5 +78,5 @@ Projects (3 found):
 ## See Also
 
 - [list-samples](../list-samples/) - List all projects
-- [read-sample](../read-sample/) - Read project README
+- [read-sample](../read-sample/) - Read project metadata and optional README
 - [read-sample-file](../read-sample-file/) - Read source file

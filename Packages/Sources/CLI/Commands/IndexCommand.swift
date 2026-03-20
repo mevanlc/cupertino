@@ -25,9 +25,12 @@ struct IndexCommand: AsyncParsableCommand {
         2. cupertino cleanup              # Clean up archives (required)
         3. cupertino index                # Index for search
 
-        The index includes:
+        By default, the index favors code and project metadata and excludes README /
+        prose files to reduce prompt-injection risk. Use --include-docs if you want
+        README and markdown/text files indexed as well.
+
+        The default index includes:
         • Project metadata (title, description, frameworks)
-        • README content
         • Source files (Swift, Objective-C, Metal, etc.)
         """
     )
@@ -55,6 +58,12 @@ struct IndexCommand: AsyncParsableCommand {
         help: "Clear existing index before indexing"
     )
     var clear: Bool = false
+
+    @Flag(
+        name: .customLong("include-docs"),
+        help: "Also index README and markdown/text files (disabled by default to reduce prompt-injection risk)"
+    )
+    var includeDocs: Bool = false
 
     mutating func run() async throws {
         Log.output("📦 Cupertino - Sample Code Indexer")
@@ -135,7 +144,8 @@ struct IndexCommand: AsyncParsableCommand {
 
         let builder = SampleIndex.Builder(
             database: db,
-            sampleCodeDirectory: sampleCodeURL
+            sampleCodeDirectory: sampleCodeURL,
+            includeDocumentationContent: includeDocs
         )
 
         let startTime = Date()
@@ -184,13 +194,14 @@ struct IndexCommand: AsyncParsableCommand {
         Log.output("   Total files: \(finalFiles)")
         Log.output("   Symbols extracted: \(finalSymbols)")
         Log.output("   Imports captured: \(finalImports)")
+        Log.output("   README/docs indexed: \(includeDocs ? "enabled" : "disabled")")
         Log.output("   Duration: \(Int(duration))s")
         Log.output("   Database: \(formatFileSize(databaseURL))")
         Log.output("")
         Log.output("💡 Sample code is now searchable via MCP tools:")
         Log.output("   • search_samples - Search projects and code")
         Log.output("   • list_samples - List all indexed projects")
-        Log.output("   • read_sample - Read project README")
+        Log.output("   • read_sample - Read project metadata (and README when indexed with --include-docs)")
         Log.output("   • read_sample_file - Read specific source file")
     }
 

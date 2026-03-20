@@ -19,7 +19,7 @@ Cupertino provides these MCP tools for AI agents to search and read documentatio
 |------|-------------|
 | [search_samples](search_samples/) | Search sample code projects and files |
 | [list_samples](list_samples/) | List all indexed sample projects |
-| [read_sample](read_sample/) | Read sample project README |
+| [read_sample](read_sample/) | Read sample project metadata and optional README |
 | [read_sample_file](read_sample_file/) | Read specific source file from a sample |
 
 ### Semantic Search Tools (AST-powered)

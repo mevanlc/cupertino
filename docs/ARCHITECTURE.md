@@ -363,6 +363,7 @@ The architecture follows a layered approach:
 - Only serves files from specified directories
 - No write operations performed
 - Uses stdio (no network ports exposed)
+- Returned documentation and sample content should be treated as untrusted external data by AI clients
 
 ---
 
@@ -701,4 +702,3 @@ MCP servers across different languages follow similar patterns:
 **Created:** 2025-11-22
 **Author:** Claude (Anthropic)
 **Project:** Cupertino - Apple Documentation CLI & MCP Server
-

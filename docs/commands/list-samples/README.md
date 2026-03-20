@@ -66,5 +66,5 @@ Total: 606 projects, 18497 files
 ## See Also
 
 - [search-samples](../search-samples/) - Search sample code
-- [read-sample](../read-sample/) - Read project README
+- [read-sample](../read-sample/) - Read project metadata and optional README
 - [index](../index/) - Index sample code
